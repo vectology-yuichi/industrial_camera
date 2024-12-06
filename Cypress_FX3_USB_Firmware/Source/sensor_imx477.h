@@ -224,6 +224,11 @@
 #define SENSOR_MODE4_HEIGHT							(unsigned int)3040
 #define SENSOR_MODE4_FPS_MIN						(unsigned int)5
 #define SENSOR_MODE4_FPS							(unsigned int)10
+
+#define SENSOR_MODE5_WIDTH							(unsigned int)1920
+#define SENSOR_MODE5_HEIGHT							(unsigned int)1080
+#define SENSOR_MODE5_FPS							(unsigned int)60
+
 #else
 
 #define SENSOR_MODE0_WIDTH							(unsigned int)640

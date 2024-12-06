@@ -346,7 +346,7 @@ const uint8_t CyFxUSBHSConfigDscr[] =
                                          * D19: Focus, Simple
                                          * D20: Window
                                          * D21: Region of Interest
-                                         * D22 – D23: Reserved, set to zero
+                                         * D22 ï¿½D23: Reserved, set to zero
                                          */
 #ifdef UVC_PTZ_SUPPORT
         0x00,0x0A,0x00,                 /* bmControls field of camera terminal: PTZ supported */
@@ -387,7 +387,7 @@ const uint8_t CyFxUSBHSConfigDscr[] =
                                          * D16: Analog Video Standard
                                          * D17: Analog Video Lock Status
                                          * D18: Contrast, Auto
-                                         * D19 – D23: Reserved. Set to zero.
+                                         * D19 ï¿½D23: Reserved. Set to zero.
                                          */
         0x01,0x00,0x00,                 /* bmControls field of processing unit: Brightness control supported */
         0x00,                           /* String desc index : Not used */
@@ -699,7 +699,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
                                          * D19: Focus, Simple
                                          * D20: Window
                                          * D21: Region of Interest
-                                         * D22 – D23: Reserved, set to zero
+                                         * D22 ï¿½D23: Reserved, set to zero
                                          */
 #ifdef UVC_PTZ_SUPPORT
         0x08,0x00,0x00,                 /* bmControls field of camera terminal: PTZ supported only Exposure */
@@ -825,7 +825,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x24,                           /* Class-specific VS I/f Type */
         0x04,                           /* Subtype : uncompressed format I/F */
         0x01,                           /* Format desciptor index */
-        0x05,                           /* Number of frame descriptor followed Number of Frame mode */
+        0x06,                           /* Number of frame descriptor followed Number of Frame mode */
         0x59,0x55,0x59,0x32,            /* GUID used to identify streaming-encoding format: YUY2  */
         0x00,0x00,0x10,0x00,
         0x80,0x00,0x00,0xAA,
@@ -894,6 +894,20 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x01,                          /* Frame interval(Frame Rate) types: Only one frame interval supported for this resolution*/
         DBVAL(INTERVAL_MODE3),           /* Frame Interval mode 3 */
 
+        0x1E,                           /* Descriptor size */
+        0x24,                           /* Descriptor type*/
+        0x05,                           /* Subtype: uncompressed frame I/F */
+        FRAME_MODE5,                  /* Frame Descriptor Index */
+        0x00,                           /* Still image capture method 1 supported */
+        WBVAL(UVC_MODE5_WIDTH),                  /* Width in pixel: mode 3*/
+        WBVAL(UVC_MODE5_HEIGHT),                 /* Height in pixel mode 3*/
+        DBVAL(MIN_MODE5_BIT_RATE),           /* Min bit rate bits/s. */
+        DBVAL(MAX_MODE5_BIT_RATE),           /* Max bit rate bits/s. */
+        DBVAL(MAX_MODE5_FRAME_SIZE),         /* Maximum video or still frame size in bytes(Deprecated) */
+        DBVAL(INTERVAL_MODE5),            /* Default Frame Interval */
+        0x01,                          /* Frame interval(Frame Rate) types: Only one frame interval supported for this resolution*/
+        DBVAL(INTERVAL_MODE5),           /* Frame Interval mode 3 */
+
         0x22,                           /* Descriptor size */
         0x24,                           /* Descriptor type*/
         0x05,                           /* Subtype: uncompressed frame I/F */
@@ -908,7 +922,6 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x02,                          /* Frame interval(Frame Rate) types: Only two frame interval supported for this resolution*/
         DBVAL(INTERVAL_MODE4),           /* Frame Interval mode 4 */
         DBVAL(INTERVAL_MODE4_MIN),           /* Frame Interval mode 4 */
-
 
         /* Endpoint Descriptor for BULK Streaming Video Data */
         0x07,                           /* Descriptor size */

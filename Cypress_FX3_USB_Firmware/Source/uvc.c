@@ -863,8 +863,8 @@ CyFxUVCApplnInit (void)
 
     /* Image sensor initialization. Reset and then initialize with appropriate configuration. */
     CyU3PThreadSleep(100);
-    SensorReset ();
-    SensorInit ();
+    //SensorReset ();
+    ////SensorInit ();
 
     /* USB initialization. */
     apiRetStatus = CyU3PUsbStart ();

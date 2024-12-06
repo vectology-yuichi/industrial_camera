@@ -1161,6 +1161,14 @@ void sensor_handle_uvc_control(uint8_t frame_index, uint32_t interval)
 			}
 		}
 		break;
+		case FRAME_MODE5:
+		{
+			if (interval == INTERVAL_MODE5)
+			{
+				selected_img_mode = &sensor_config[2];
+			}
+		}
+		break;
 		case FRAME_MODE4:
 		{
 			if (interval == INTERVAL_MODE4_MIN)

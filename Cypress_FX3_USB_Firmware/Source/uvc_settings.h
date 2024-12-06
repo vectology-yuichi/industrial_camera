@@ -57,6 +57,14 @@
 #define INTERVAL_MODE4_MIN							(unsigned long)(10000000/UVC_MODE4_FPS_MIN)
 #define INTERVAL_MODE4								(unsigned long)(10000000/UVC_MODE4_FPS)
 
+#define UVC_MODE5_WIDTH								(unsigned int)SENSOR_MODE5_WIDTH
+#define UVC_MODE5_HEIGHT							(unsigned int)SENSOR_MODE5_HEIGHT
+#define UVC_MODE5_FPS								(unsigned int)SENSOR_MODE5_FPS
+#define MIN_MODE5_BIT_RATE							(unsigned long)(UVC_MODE5_WIDTH*UVC_MODE5_HEIGHT*16*UVC_MODE5_FPS) //YUY2 4byte per 2 pixel
+#define MAX_MODE5_BIT_RATE							(unsigned long)(UVC_MODE5_WIDTH*UVC_MODE5_HEIGHT*16*UVC_MODE5_FPS)
+#define MAX_MODE5_FRAME_SIZE						(unsigned long)(UVC_MODE5_WIDTH*UVC_MODE5_HEIGHT*2)//YUY2 4byte per 2 pixel
+#define INTERVAL_MODE5								(unsigned long)(10000000/UVC_MODE5_FPS)
+
 #define INTERVAL_30									(unsigned long)(10000000/30)
 #define MAX_FRAME_SIZE                              (unsigned long)(UVC_MODE4_WIDTH*UVC_MODE4_HEIGHT*2)//yuy2
 
@@ -67,6 +75,7 @@ typedef enum
 	FRAME_MODE2,
 	FRAME_MODE3,
 	FRAME_MODE4,
+	FRAME_MODE5,
 }frame_t;
 
 #endif /* UVC_SETTINGS_H_ */
