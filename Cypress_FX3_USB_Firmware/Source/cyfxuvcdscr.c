@@ -608,7 +608,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
 	#ifdef FX3_UVC_1_0_SUPPORT
 			0xD9,0x00,                      /* Length of this descriptor and all sub descriptors */
 	#else
-			0x56,0x01,                      /* Length of this descriptor and all sub descriptors */
+			0x74,0x01,                      /* Length of this descriptor and all sub descriptors */
 	#endif
         0x02,                           /* Number of interfaces */
 #endif
@@ -805,12 +805,12 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x00,                           /* Interface protocol code : Undefined */
         0x00,                           /* Interface descriptor string index */
 
-       /* Class-specific Video Streaming Input Header Descriptor */
+        /* Class-specific Video Streaming Input Header Descriptor */
         0x0E,                           /* Descriptor size */
         0x24,                           /* Class-specific VS I/f Type */
         0x01,                           /* Descriptotor Subtype : Input Header */
         0x01,                           /* 1 format desciptor follows */
-        0xB5,0x00,                      /* Total size of Class specific VS descr */
+        0xD3,0x00,                      /* Total size of Class specific VS descr */
         CY_FX_EP_BULK_VIDEO,            /* EP address for BULK video data */
         0x00,                           /* No dynamic format change supported , Hardware button on Camera?*/
         0x04,                           /* Output terminal ID : 4 */
