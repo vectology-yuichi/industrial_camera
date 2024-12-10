@@ -608,7 +608,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
 	#ifdef FX3_UVC_1_0_SUPPORT
 			0xD9,0x00,                      /* Length of this descriptor and all sub descriptors */
 	#else
-			0x74,0x01,                      /* Length of this descriptor and all sub descriptors */
+			0x56,0x01,                      /* Length of this descriptor and all sub descriptors */
 	#endif
         0x02,                           /* Number of interfaces */
 #endif
@@ -805,12 +805,12 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x00,                           /* Interface protocol code : Undefined */
         0x00,                           /* Interface descriptor string index */
 
-        /* Class-specific Video Streaming Input Header Descriptor */
+       /* Class-specific Video Streaming Input Header Descriptor */
         0x0E,                           /* Descriptor size */
         0x24,                           /* Class-specific VS I/f Type */
         0x01,                           /* Descriptotor Subtype : Input Header */
         0x01,                           /* 1 format desciptor follows */
-        0xD3,0x00,                      /* Total size of Class specific VS descr */
+        0xB5,0x00,                      /* Total size of Class specific VS descr */
         CY_FX_EP_BULK_VIDEO,            /* EP address for BULK video data */
         0x00,                           /* No dynamic format change supported , Hardware button on Camera?*/
         0x04,                           /* Output terminal ID : 4 */
@@ -825,7 +825,8 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x24,                           /* Class-specific VS I/f Type */
         0x04,                           /* Subtype : uncompressed format I/F */
         0x01,                           /* Format desciptor index */
-        0x06,                           /* Number of frame descriptor followed Number of Frame mode */
+ //     0x05,                           /* Number of frame descriptor followed Number of Frame mode */
+        0x05,                           /* Number of frame descriptor followed Number of Frame mode */
         0x59,0x55,0x59,0x32,            /* GUID used to identify streaming-encoding format: YUY2  */
         0x00,0x00,0x10,0x00,
         0x80,0x00,0x00,0xAA,
@@ -880,20 +881,21 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x01,                          /* Frame interval(Frame Rate) types: Only one frame interval supported for this resolution*/
         DBVAL(INTERVAL_MODE2),           /* Frame Interval mode 2 */
 
-        0x1E,                           /* Descriptor size */
-        0x24,                           /* Descriptor type*/
-        0x05,                           /* Subtype: uncompressed frame I/F */
-        FRAME_MODE3,                  /* Frame Descriptor Index */
-        0x00,                           /* Still image capture method 1 supported */
-        WBVAL(UVC_MODE3_WIDTH),                  /* Width in pixel: mode 3*/
-        WBVAL(UVC_MODE3_HEIGHT),                 /* Height in pixel mode 3*/
-        DBVAL(MIN_MODE3_BIT_RATE),           /* Min bit rate bits/s. */
-        DBVAL(MAX_MODE3_BIT_RATE),           /* Max bit rate bits/s. */
-        DBVAL(MAX_MODE3_FRAME_SIZE),         /* Maximum video or still frame size in bytes(Deprecated) */
-        DBVAL(INTERVAL_MODE3),            /* Default Frame Interval */
-        0x01,                          /* Frame interval(Frame Rate) types: Only one frame interval supported for this resolution*/
-        DBVAL(INTERVAL_MODE3),           /* Frame Interval mode 3 */
+//        0x1E,                           /* Descriptor size */
+//        0x24,                           /* Descriptor type*/
+//        0x05,                           /* Subtype: uncompressed frame I/F */
+//        FRAME_MODE3,                  /* Frame Descriptor Index */
+//        0x00,                           /* Still image capture method 1 supported */
+//        WBVAL(UVC_MODE3_WIDTH),                  /* Width in pixel: mode 3*/
+//        WBVAL(UVC_MODE3_HEIGHT),                 /* Height in pixel mode 3*/
+//        DBVAL(MIN_MODE3_BIT_RATE),           /* Min bit rate bits/s. */
+//        DBVAL(MAX_MODE3_BIT_RATE),           /* Max bit rate bits/s. */
+//        DBVAL(MAX_MODE3_FRAME_SIZE),         /* Maximum video or still frame size in bytes(Deprecated) */
+//        DBVAL(INTERVAL_MODE3),            /* Default Frame Interval */
+//        0x01,                          /* Frame interval(Frame Rate) types: Only one frame interval supported for this resolution*/
+//        DBVAL(INTERVAL_MODE3),           /* Frame Interval mode 3 */
 
+//add
         0x1E,                           /* Descriptor size */
         0x24,                           /* Descriptor type*/
         0x05,                           /* Subtype: uncompressed frame I/F */
@@ -907,6 +909,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         DBVAL(INTERVAL_MODE5),            /* Default Frame Interval */
         0x01,                          /* Frame interval(Frame Rate) types: Only one frame interval supported for this resolution*/
         DBVAL(INTERVAL_MODE5),           /* Frame Interval mode 3 */
+
 
         0x22,                           /* Descriptor size */
         0x24,                           /* Descriptor type*/
@@ -922,6 +925,7 @@ const uint8_t CyFxUSBSSConfigDscr[] =
         0x02,                          /* Frame interval(Frame Rate) types: Only two frame interval supported for this resolution*/
         DBVAL(INTERVAL_MODE4),           /* Frame Interval mode 4 */
         DBVAL(INTERVAL_MODE4_MIN),           /* Frame Interval mode 4 */
+
 
         /* Endpoint Descriptor for BULK Streaming Video Data */
         0x07,                           /* Descriptor size */

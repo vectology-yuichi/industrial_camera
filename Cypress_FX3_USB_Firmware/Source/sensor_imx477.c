@@ -1127,6 +1127,9 @@ static void set_mirror_flip(uint8_t image_mirror)
 
 void sensor_handle_uvc_control(uint8_t frame_index, uint32_t interval)
 {
+	CyU3PDebugPrint (4, "imx477 sensor_handle_uvc_control zzzzzzzzzzzz \r\n");
+    CyU3PDebugPrint (4, "frame_index=  %x\r\n", frame_index);
+
 	switch(frame_index)
 	{
 		case FRAME_MODE0:
@@ -1161,14 +1164,6 @@ void sensor_handle_uvc_control(uint8_t frame_index, uint32_t interval)
 			}
 		}
 		break;
-		case FRAME_MODE5:
-		{
-			if (interval == INTERVAL_MODE5)
-			{
-				selected_img_mode = &sensor_config[2];
-			}
-		}
-		break;
 		case FRAME_MODE4:
 		{
 			if (interval == INTERVAL_MODE4_MIN)
@@ -1187,11 +1182,13 @@ void sensor_handle_uvc_control(uint8_t frame_index, uint32_t interval)
 
 		}
 	}
-
+	CyU3PDebugPrint (4, "sensor_configure_mode before \r\n");
 	sensor_configure_mode (selected_img_mode);
 }
 void sensor_configure_mode(imgsensor_mode_t * mode)
 {
+
+	CyU3PDebugPrint (4, "sensor_configure_mode before \r\n");
 
 	camera_stream_on(false);
 
@@ -1199,7 +1196,7 @@ void sensor_configure_mode(imgsensor_mode_t * mode)
 
 	for (uint16_t i = 0; i < mode->reg_list.num_of_regs; i++)
 	{
-		//CyU3PDebugPrint (4, "Reg 0x%x val 0x%x\n", (mode_default + i)->address, (mode_default + i)->val);
+		CyU3PDebugPrint (4, "Reg 0x%x val 0x%x\n", (mode_default + i)->address, (mode_default + i)->val);
 		sensor_i2c_write(((mode->reg_list.regs) + i)->address, ((mode->reg_list.regs) + i)->val);
 
 	}
@@ -1222,6 +1219,7 @@ void sensor_configure_mode(imgsensor_mode_t * mode)
 	sensor_i2c_write(REG_COARSE_INTEGRATION_TIME_MSB, (mode->integration_def >> 8) & 0xFF);
 	sensor_i2c_write(REG_COARSE_INTEGRATION_TIME_LSB, mode->integration_def & 0xFF);
 
+	CyU3PDebugPrint (4, "camera_stream_on before \r\n");
 	camera_stream_on(selected_img_mode->sensor_mode);
 }
 

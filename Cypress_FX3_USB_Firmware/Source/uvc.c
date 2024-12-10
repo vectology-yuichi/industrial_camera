@@ -14,6 +14,9 @@
 
 #include "uvc.h"
 
+#include <stdio.h>
+#include <stdint.h>
+
 #include "camera_ptzcontrol.h"
 #include "cyfxgpif2config.h"
 #include "uvc_settings.h"
@@ -80,7 +83,7 @@ uint8_t glProbeCtrl[CY_FX_UVC_MAX_PROBE_SETTING] = {
     0x00, 0x00,                 /* bmHint : no hit */
     0x01,                       /* Use 1st Video format index */
     0x01,                       /* Use 1st Video frame index */
-    DBVAL(INTERVAL_30),     /* Desired frame interval in the unit of 100ns: 30 fps */
+    DBVAL(INTERVAL_60),     /* Desired frame interval in the unit of 100ns: 30 fps */
     0x00, 0x00,                 /* Key frame rate in key frame/video frame units: only applicable
                                    to video streaming with adjustable compression parameters */
     0x00, 0x00,                 /* PFrame rate in PFrame / key frame units: only applicable to
@@ -305,16 +308,23 @@ CyFxUVCApplnUSBSetupCB (
     wIndex    = (uint16_t)(setupdat1 & CY_FX_USB_SETUP_INDEX_MASK);
     wLength   = (uint16_t)((setupdat1 & CY_FX_USB_SETUP_LENGTH_MASK) >> 16);
 
+
+    //CyU3PDebugPrint (4, "Obtain Request Type and Request\r\n");
+
     /* Check for UVC Class Requests */
     switch (bmReqType)
     {
+    //CyU3PDebugPrint (4, "bmReqType\r\n");
         case CY_FX_USB_UVC_GET_REQ_TYPE:
         case CY_FX_USB_UVC_SET_REQ_TYPE:
+            //CyU3PDebugPrint (4, "case CY_FX_USB_UVC_SET_REQ_TYPE:\r\n");
             /* UVC Specific requests are handled in the EP0 thread. */
             switch (wIndex & 0xFF)
             {
+            //CyU3PDebugPrint (4, "switch (wIndex & 0xFF)\r\n");
                 case CY_FX_UVC_CONTROL_INTERFACE:
                     {
+                        //CyU3PDebugPrint (4, "case CY_FX_UVC_CONTROL_INTERFACE:\r\n");
                         uvcHandleReq = CyTrue;
                         status = CyU3PEventSet (&glFxUVCEvent, CY_FX_UVC_VIDEO_CONTROL_REQUEST_EVENT, CYU3P_EVENT_OR);
                         if (status != CY_U3P_SUCCESS)
@@ -327,14 +337,21 @@ CyFxUVCApplnUSBSetupCB (
 
                 case CY_FX_UVC_STREAM_INTERFACE:
                     {
+                        //CyU3PDebugPrint (4, "case CY_FX_UVC_STREAM_INTERFACE:\r\n");
+
                         uvcHandleReq = CyTrue;
+                        //CyU3PDebugPrint (4, "uvcHandleReq: %x\r\n", uvcHandleReq);
+
                         status = CyU3PEventSet (&glFxUVCEvent, CY_FX_UVC_VIDEO_STREAM_REQUEST_EVENT, CYU3P_EVENT_OR);
+                        //CyU3PDebugPrint (4, "Status %x\r\n", status);
+
                         if (status != CY_U3P_SUCCESS)
                         {
                             /* Error handling */
                             CyU3PDebugPrint (4, "Set CY_FX_UVC_VIDEO_STREAM_REQUEST_EVENT Failed %x\r\n", status);
                             CyU3PUsbStall (0, CyTrue, CyFalse);
                         }
+                        //CyU3PDebugPrint (4, "finish:\r\n");
                     }
                     break;
 
@@ -344,6 +361,7 @@ CyFxUVCApplnUSBSetupCB (
             break;
 
         case CY_FX_USB_SET_INTF_REQ_TYPE:
+            //CyU3PDebugPrint (4, "case CY_FX_USB_SET_INTF_REQ_TYPE\r\n");
             if (bRequest == CY_FX_USB_SET_INTERFACE_REQ)
             {
                 /* Some hosts send Set Interface Alternate Setting 0 command while stopping the video
@@ -375,6 +393,7 @@ CyFxUVCApplnUSBSetupCB (
             break;
 
         case CY_U3P_USB_TARGET_ENDPT:
+            CyU3PDebugPrint (4, "case CY_U3P_USB_TARGET_ENDPT:");
             if (bRequest == CY_U3P_USB_SC_CLEAR_FEATURE)
             {
                 if (wIndex == CY_FX_EP_BULK_VIDEO)
@@ -558,14 +577,22 @@ CyFxGpifCB (
     switch (currentState)
     {
         case PARTIAL_BUF_IN_SCK0:
+        //	CyU3PGpioSetValue(22, CyTrue);
+        //	CyU3PGpioSetValue(22, CyFalse);
             CyU3PDmaSocketSetWrapUp (CY_U3P_PIB_SOCKET_0);
             break;
         case FULL_BUF_IN_SCK0:
+        //	CyU3PGpioSetValue(22, CyTrue);
+        //	CyU3PGpioSetValue(22, CyFalse);
             break;
         case PARTIAL_BUF_IN_SCK1:
+        //	CyU3PGpioSetValue(22, CyTrue);
+        // 	CyU3PGpioSetValue(22, CyFalse);
             CyU3PDmaSocketSetWrapUp (CY_U3P_PIB_SOCKET_1);
             break;
         case FULL_BUF_IN_SCK1:
+        //	CyU3PGpioSetValue(22, CyTrue);
+        //	CyU3PGpioSetValue(22, CyFalse);
             break;
 
         default:
@@ -851,6 +878,8 @@ CyFxUVCApplnInit (void)
 
     CyFxUvcAppGpifInit ();
 
+    CyU3PDebugPrint (4, "App init.");
+
     /* Register the GPIF State Machine callback used to get frame end notifications.
      * We use the fast callback version which is triggered from ISR context.
      */
@@ -863,8 +892,12 @@ CyFxUVCApplnInit (void)
 
     /* Image sensor initialization. Reset and then initialize with appropriate configuration. */
     CyU3PThreadSleep(100);
+
+    //CyU3PDebugPrint (4, "Sensor reset before.\n");
     //SensorReset ();
-    ////SensorInit ();
+    //SensorInit ();
+    //CyU3PDebugPrint (4, "SEnsor reset after.\n");
+
 
     /* USB initialization. */
     apiRetStatus = CyU3PUsbStart ();
@@ -876,9 +909,11 @@ CyFxUVCApplnInit (void)
 
     /* Setup the Callback to Handle the USB Setup Requests */
     CyU3PUsbRegisterSetupCallback (CyFxUVCApplnUSBSetupCB, CyFalse);
+    //CyU3PDebugPrint (4, "1\n");
 
     /* Setup the Callback to Handle the USB Events */
     CyU3PUsbRegisterEventCallback (CyFxUVCApplnUSBEventCB);
+    //CyU3PDebugPrint (4, "2\n");
 
     /* Register a callback to handle LPM requests from the USB 3.0 host. */
     CyU3PUsbRegisterLPMRequestCallback (CyFxUVCAppLPMRqtCB);
@@ -900,6 +935,9 @@ CyFxUVCApplnInit (void)
     CyU3PUsbSetDesc (CY_U3P_USB_SET_STRING_DESCR, 0, (uint8_t *)CyFxUSBStringLangIDDscr);
     CyU3PUsbSetDesc (CY_U3P_USB_SET_STRING_DESCR, 1, (uint8_t *)CyFxUSBManufactureDscr);
     CyU3PUsbSetDesc (CY_U3P_USB_SET_STRING_DESCR, 2, (uint8_t *)CyFxUSBProductDscr);
+
+
+    //CyU3PDebugPrint (4, "3\n");
 
     /* Configure the video streaming endpoint. */
     endPointConfig.enable   = 1;
@@ -957,6 +995,9 @@ CyFxUVCApplnInit (void)
         CyU3PDebugPrint (4, "DMA Channel Creation Failed, Error Code = %d\n", apiRetStatus);
         CyFxAppErrorHandler (apiRetStatus);
     }
+
+
+    //CyU3PDebugPrint (4, "4\n");
 
 #ifdef USB_DEBUG_INTERFACE
     /* Configure the endpoints and create DMA channels used by the USB debug interface.
@@ -1120,6 +1161,9 @@ CyFxUvcApplnStop()
 void
 CyFxUvcApplnStart()
 {
+
+    CyU3PDebugPrint (4, "CyFxUvcAppLlnStart\r\n");
+
     CyU3PReturnStatus_t   apiRetStatus;
 
 #ifdef DEBUG_PRINT_FRAME_COUNT
@@ -1204,7 +1248,7 @@ UVCAppThread_Entry (
 
     /* Initialize the UVC Application */
     CyFxUVCApplnInit ();
-
+    CyU3PDebugPrint (4, "CyFxUVCApplnInit is done \r\n");
     /*
        The actual data forwarding from sensor to USB host is done from the DMA and GPIF callback
        functions. The thread is only responsible for checking for streaming start/stop conditions.
@@ -1226,11 +1270,20 @@ UVCAppThread_Entry (
      */
     for (;;)
     {
+
+    	//CyU3PDebugPrint (4, "CyU3PEventGet before \r\n");
+
+
         apiRetStatus = CyU3PEventGet (&glFxUVCEvent, CY_FX_UVC_STREAM_ABORT_EVENT | CY_FX_UVC_STREAM_EVENT |
                 CY_FX_UVC_DMA_RESET_EVENT | CY_FX_USB_SUSPEND_EVENT_HANDLER, CYU3P_EVENT_OR_CLEAR, &flag, LOOP_TIMEOUT);
 
+    	//CyU3PDebugPrint (4, "CyU3PEventGet after \r\n");
+
+        //CyU3PDebugPrint (4, "apiRetStatus =============  %x\r\n", apiRetStatus);
+
         if (apiRetStatus == CY_U3P_SUCCESS)
         {
+        	//CyU3PDebugPrint (4, "apiResStatus is OK \r\n");
             /* Request to start video stream. */
             if ((flag & CY_FX_UVC_STREAM_EVENT) != 0)
             {
@@ -1773,8 +1826,17 @@ static void UVCHandleVideoStreamingRqts (void)
     CyU3PReturnStatus_t apiRetStatus = CY_U3P_SUCCESS;
     uint16_t readCount;
 
+	//CyU3PDebugPrint (4, "******************Handler for the video streaming control requests********************* \r\n");
+
+    //CyU3PDebugPrint (4, "apiRetStatus =============  %x\r\n", apiRetStatus);
+
+    //CyU3PDebugPrint (4, "wValue =============  %x\r\n", wValue);
+
     switch (wValue)
     {
+
+
+
         case CY_FX_UVC_PROBE_CTRL:
             switch (bRequest)
             {
@@ -1824,14 +1886,23 @@ static void UVCHandleVideoStreamingRqts (void)
             switch (bRequest)
             {
                 case CY_FX_USB_UVC_GET_INFO_REQ:
+
+                	//CyU3PDebugPrint (4, "xxxxxxxxxx case CY_FX_USB_UVC_GET_INFO_REQ: xxxxxxx \r\n");
+                    //CyU3PDebugPrint (4, "apiRetStatus =============  %x\r\n", apiRetStatus);
+                    //CyU3PDebugPrint (4, "wValue =============  %x\r\n", wValue);
+
                     glEp0Buffer[0] = 3;                        /* GET/SET requests are supported. */
                     CyU3PUsbSendEP0Data (1, (uint8_t *)glEp0Buffer);
                     break;
                 case CY_FX_USB_UVC_GET_LEN_REQ:
+
+                	//CyU3PDebugPrint (4, "xxxxxxxxxx case CY_FX_USB_UVC_GET_LEN_REQ: xxxxxxx \r\n");
                     glEp0Buffer[0] = CY_FX_UVC_MAX_PROBE_SETTING;
                     CyU3PUsbSendEP0Data (1, (uint8_t *)glEp0Buffer);
                     break;
                 case CY_FX_USB_UVC_GET_CUR_REQ:
+
+                	//CyU3PDebugPrint (4, "xxxxxxxxxx case CY_FX_USB_UVC_GET_CUR_REQ: xxxxxxx \r\n");
                     if (usbSpeed == CY_U3P_SUPER_SPEED)
                     {
                         CyU3PUsbSendEP0Data (CY_FX_UVC_MAX_PROBE_SETTING, (uint8_t *)glProbeCtrl);
@@ -1842,15 +1913,23 @@ static void UVCHandleVideoStreamingRqts (void)
                     }
                     break;
                 case CY_FX_USB_UVC_SET_CUR_REQ:
+
+                	//CyU3PDebugPrint (4, "xxxxxxxxxx case CY_FX_USB_UVC_SET_CUR_REQ: xxxxxxx \r\n");
                     /* The host has selected the parameters for the video stream. Check the desired
                        resolution settings, configure the sensor and start the video stream.
                        */
                     apiRetStatus = CyU3PUsbGetEP0Data (CY_FX_UVC_MAX_PROBE_SETTING_ALIGNED, glCommitCtrl, &readCount);
+                    //CyU3PDebugPrint (4, "apiRetStatus bbbbbbbb =============  %x\r\n", apiRetStatus);
+
+
+
                     if (apiRetStatus == CY_U3P_SUCCESS)
                     {
-                    	uvc_control_t *uvc_control = (uvc_control_t *)glCommitCtrl;
 
-                        sensor_handle_uvc_control(uvc_control->frame_index, uvc_control->frame_interval);
+                    	//uvc_control_t *uvc_control = (uvc_control_t *)glCommitCtrl;
+                        //sensor_handle_uvc_control(uvc_control->frame_index, uvc_control->frame_interval);
+
+                        //CyU3PDebugPrint (4, "aaaaaaaaaaa  %x\r\n", apiRetStatus);
 
                         #ifdef FRAME_TIMER_ENABLE
                         	/* We are using frame timer value of 400ms as the frame time is upto 66ms.
@@ -1858,8 +1937,12 @@ static void UVCHandleVideoStreamingRqts (void)
                         	glFrameTimerPeriod = CY_FX_UVC_FRAME_TIMER_VAL_400MS;
 						#endif
 
+                        //CyU3PDebugPrint (4, "cccccccccc  %x\r\n", apiRetStatus);
+
                         /* We can start streaming video now. */
                         apiRetStatus = CyU3PEventSet (&glFxUVCEvent, CY_FX_UVC_STREAM_EVENT, CYU3P_EVENT_OR);
+                        //CyU3PDebugPrint (4, "dddddddddd  %x\r\n", apiRetStatus);
+
                         if (apiRetStatus != CY_U3P_SUCCESS)
                         {
                             CyU3PDebugPrint (4, "Set CY_FX_UVC_STREAM_EVENT failed %x\r\n", apiRetStatus);

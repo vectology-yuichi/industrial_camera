@@ -66,7 +66,9 @@
 #define INTERVAL_MODE5								(unsigned long)(10000000/UVC_MODE5_FPS)
 
 #define INTERVAL_30									(unsigned long)(10000000/30)
-#define MAX_FRAME_SIZE                              (unsigned long)(UVC_MODE4_WIDTH*UVC_MODE4_HEIGHT*2)//yuy2
+#define INTERVAL_60									(unsigned long)(10000000/60)
+//#define MAX_FRAME_SIZE                              (unsigned long)(UVC_MODE4_WIDTH*UVC_MODE4_HEIGHT*2)//yuy2
+#define MAX_FRAME_SIZE                              (unsigned long)(UVC_MODE5_WIDTH/2*UVC_MODE5_HEIGHT*4)//yuy2
 
 typedef enum
 {
